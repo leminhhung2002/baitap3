@@ -1,0 +1,483 @@
+bài 1 : 
+#include <stdio.h>
+#include <stdlib.h>
+typedef struct Node{
+    int Inf;
+    struct Node *next;
+}Node;
+Node * insertEnd(struct Node * head,int data){ // tao mot node ms
+    Node * temp=head,*ptr;
+    ptr=(struct Node *)malloc(sizeof(struct Node));
+    ptr->Inf=data;
+    ptr->next=NULL;
+    if(temp==NULL){
+        head=ptr;
+    }else{
+        while(temp->next!=NULL){
+            temp=temp->next;
+        }
+        temp->next=ptr;
+    }
+    return head;
+}
+void xoa(Node **head,int data){
+    struct Node *temp = *head, *prev;
+	if (temp != NULL && temp->Inf == data) {
+		*head = temp->next; // Changed head
+		free(temp); // free old head
+		return;
+	}
+	while (temp != NULL && temp->Inf != data) {
+		prev = temp;
+		temp = temp->next;
+	}
+	if (temp == NULL)
+		return;
+	prev->next = temp->next;
+	free(temp); 
+}
+display(Node *head){
+    Node *i;
+    for(i=head; i!= NULL; i=i->next){
+        printf("%d\n",i->Inf);
+    }  
+}
+int main(){
+    Node * head=NULL,*i;
+    int n,data,arr[100],k=0;
+    scanf("%d",&n);
+    while(n-->0){
+        scanf("%d",&data);
+        head=insertEnd(head,data);//chèn vào cuối 
+    }
+    for(i=head; i!= NULL; i=i->next){//duyệt qua các phần tử ,dùng 1 mảng phụ dể lưu các số chẵ n
+        if (i->Inf%2==0){
+            arr[k]=i->Inf;
+            k++;
+        }
+    }
+    int j;
+    for(j=0; j<k;j++){
+        xoa(&head,arr[j]);//duyệt qua mảng phụ và xóa các giá trị chẵn
+    }
+    printf("sau khi xoa:\n");
+    display(head);
+    return 0;
+}
+bài 3 : 
+#include <stdio.h>
+#include <stdlib.h>
+typedef struct Node{
+    int info;
+    struct Node *next;
+}Node;
+Node * insertEnd(struct Node * head,int data){
+    Node * temp=head,*ptr;
+    ptr=(struct Node *)malloc(sizeof(struct Node));
+    ptr->info=data;
+    ptr->next=NULL;
+    if(temp==NULL){
+        head=ptr;
+    }else{
+        while(temp->next!=NULL){
+            temp=temp->next;
+        }
+        temp->next=ptr;
+    }
+    return head;
+}
+//2 3 4 5
+void removeDupes(Node *head){
+	Node *p1, *p2, *dup;
+    p1 = head;
+    while (p1 != NULL && p1->next != NULL) {
+        p2 = p1;
+        while (p2->next != NULL) {
+            if (p1->info == p2->next->info) {
+                dup = p2->next;
+                p2->next = p2->next->next;
+                free(dup);
+            }
+            else
+                p2 = p2->next;
+        }
+        p1 = p1->next;
+    }
+}
+display(Node *head){
+    Node *i;
+    for(i=head; i!= NULL; i=i->next){
+        printf("%d\n",i->info);
+    }  
+}
+int main(){
+    Node * head=NULL;
+    int n,data,arr[100],k=0;
+    scanf("%d",&n);
+    while(n-->0){
+        scanf("%d",&data);
+        head=insertEnd(head,data);//chèn vào cuối
+    }
+    removeDupes(head);
+    printf("sau khi xoa cac ptu trung:\n");
+    display(head);
+    return 0;
+}
+bài 13:
+#include <stdio.h>
+#include <stdlib.h>
+typedef struct Node {
+	int data;
+	struct Node* next;
+	struct Node* prev;
+}Node;
+Node* push(Node* head, int new_data){
+	Node* new_node= (struct Node*)malloc(sizeof(struct Node));
+    new_node->data = new_data;
+    new_node->next = head;
+    new_node->prev = NULL;
+    if (head != NULL)
+        head->prev = new_node;
+    head = new_node;
+}
+void Remove(struct Node** head_ref, struct Node* del){
+    if (*head_ref == NULL || del == NULL)
+        return;
+    if (*head_ref == del)
+        *head_ref = del->next;
+    if (del->next != NULL)
+        del->next->prev = del->prev;
+    if (del->prev != NULL)
+        del->prev->next = del->next;
+    free(del);
+}
+void RemoveNodeAtGivenPos(struct Node** head_ref, int n){
+    int i;
+    if (*head_ref == NULL || n <= 0)
+        return;
+    struct Node* current = *head_ref;
+    for (i = 1; current != NULL && i < n; i++)
+        current = current->next;
+    if (current == NULL)
+        return;
+    Remove(head_ref, current);
+}
+void printList(struct Node* node){
+    Node *i;
+    for(i=node; i!= NULL; i=i->next){
+        printf("%d ",i->data);
+    }  
+    printf("\n");
+}
+int main(){
+	struct Node* head = NULL,*i;
+    int n,data,key,j=1;
+    scanf("%d",&n);
+    while(n-->0){
+        scanf("%d",&data);
+        head=push(head, data);
+    }
+    printList(head);
+    printf("Nhap so can xoa:\n");
+	scanf("%d",&key);
+    for(i=head; i!= NULL; i=i->next){
+        if (i->data==key){
+            break;
+        }
+        j++;
+    }
+    RemoveNodeAtGivenPos(&head,j);
+	printList(head);
+	return 0;
+}
+bài 15 : 
+#include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
+struct StackNode {
+	int data;
+	struct StackNode* next;
+};
+struct StackNode* newNode(int data){
+	struct StackNode* stackNode =(struct StackNode*)malloc(sizeof(struct StackNode));
+	stackNode->data = data;
+	stackNode->next = NULL;
+	return stackNode;
+}
+int isEmpty(struct StackNode* root){//Trả về true nếu ngăn xếp trống, ngược lại là false.
+	return !root;
+}
+void push(struct StackNode** root, int data){//Thêm một mục trong ngăn xếp
+	struct StackNode* stackNode = newNode(data);
+	stackNode->next = *root;
+	*root = stackNode;
+	printf("%d pushed to stack\n", data);
+}
+int pop(struct StackNode** root){//Loại bỏ một mục khỏi ngăn xếp
+	if (isEmpty(*root))
+		return INT_MIN;
+	struct StackNode* temp = *root;
+	*root = (*root)->next;
+	int popped = temp->data;
+	free(temp);
+
+	return popped;
+}
+int peek(struct StackNode* root){//lay ptu dau tien nhung khong xoa
+	if (isEmpty(root))
+		return INT_MIN;
+	return root->data;
+}
+void output(struct StackNode* root){
+    struct StackNode* i;
+    printf("so ptu trong mang:");
+    for(i=root; i!=NULL; i=i->next){
+        printf("%d ",i->data);
+    }
+    printf("\n");
+    printf("\n");
+}
+int main(){
+	struct StackNode* root = NULL;
+	push(&root, 5);
+    printf("vi tri dau ngan xep: %d\n",peek(root));
+    output(root);
+
+	push(&root, 3);
+    printf("vi tri dau ngan xep: %d\n",peek(root));
+    output(root);
+    
+    printf("%d popped from stack\n", pop(&root));
+    printf("vi tri dau ngan xep: %d\n",peek(root));
+    output(root);
+    
+    push(&root, 2);
+    printf("vi tri dau ngan xep: %d\n",peek(root));
+    output(root);
+    
+    push(&root, 8);
+    printf("vi tri dau ngan xep: %d\n",peek(root));
+    output(root);
+    
+    printf("%d popped from stack\n", pop(&root));
+    printf("vi tri dau ngan xep: %d\n",peek(root));
+    output(root);
+    
+    printf("%d popped from stack\n", pop(&root));
+    printf("vi tri dau ngan xep: %d\n",peek(root));
+    output(root);
+    
+    push(&root, 9);
+    printf("vi tri dau ngan xep: %d\n",peek(root));
+    output(root);
+    
+	push(&root, 1);
+    printf("vi tri dau ngan xep: %d\n",peek(root));
+    output(root);
+    
+    printf("%d popped from stack\n", pop(&root));
+    printf("vi tri dau ngan xep: %d\n",peek(root));
+    output(root);
+    
+    push(&root, 7);
+    printf("vi tri dau ngan xep: %d\n",peek(root));
+    output(root);
+    
+    push(&root, 6);
+    printf("vi tri dau ngan xep: %d\n",peek(root));
+    output(root);
+    
+    printf("%d popped from stack\n", pop(&root));
+    printf("vi tri dau ngan xep: %d\n",peek(root));
+    output(root);
+    
+    printf("%d popped from stack\n", pop(&root));
+    printf("vi tri dau ngan xep: %d\n",peek(root));
+    output(root);
+    
+    push(&root, 4);
+    printf("vi tri dau ngan xep: %d\n",peek(root));
+    output(root);
+    
+    printf("%d popped from stack\n", pop(&root));
+    printf("vi tri dau ngan xep: %d\n",peek(root));
+    output(root);
+    
+    printf("%d popped from stack\n", pop(&root));
+    printf("vi tri dau ngan xep: %d\n",peek(root));
+    output(root);
+    
+	return 0;
+}
+bài 16:
+#include <stdio.h>
+#include <stdlib.h>
+struct QNode {
+	int key;
+	struct QNode* next;
+};
+struct Queue {
+	struct QNode *front, *rear;
+};
+struct QNode* newNode(int k){
+	struct QNode* temp = (struct QNode*)malloc(sizeof(struct QNode));
+	temp->key = k;
+	temp->next = NULL;
+	return temp;
+}
+struct Queue* createQueue(){
+	struct Queue* q = (struct Queue*)malloc(sizeof(struct Queue));
+	q->front = q->rear = NULL;
+	return q;
+}
+void enQueue(struct Queue* q, int k){
+	struct QNode* temp = newNode(k);
+	if (q->rear == NULL) {
+		q->front = q->rear = temp;
+		return;
+	}
+	q->rear->next = temp;
+	q->rear = temp;
+}
+void deQueue(struct Queue* q){
+	if (q->front == NULL)
+		return;
+	struct QNode* temp = q->front;
+	q->front = q->front->next;
+	if (q->front == NULL)
+		q->rear = NULL;
+	free(temp);
+}
+int frontelement(struct Queue* q){
+   return q->front->key;
+}
+int rearelement(struct Queue* q){
+    return q->rear->key;
+}
+void display(struct Queue* q){
+    if (q->front == NULL){
+        printf("Queue is empty");
+
+    }else{
+        while (q->front != NULL){
+            printf("%d ", q->front->key);
+            q->front = q->front->next;
+        }  
+    }
+}
+void menu(){
+    printf("---------------------------\n");
+    printf("\n 1 - Enque");
+    printf("\n 2 - Deque");
+    printf("\n 3 - Front element");
+    printf("\n 4 - Rear element");
+    printf("\n 5 - Display");
+    printf("\n 6 - Exit");
+    printf("\n--------------------------\n");
+}
+int main(){
+	struct Queue* q = createQueue();
+    int data,ch,e=0;
+    while (1){
+        system("cls");
+        menu();
+        printf("\n Enter choice : ");
+        scanf("%d", &ch);
+        switch (ch){
+        case 1:
+            printf("Enter data : ");
+            scanf("%d", &data);
+            enQueue(q,data);
+            break;
+        case 2:
+            deQueue(q);
+            break;
+        case 3:
+            e = frontelement(q);
+            if (e != 0)
+                printf("Queue Front : %d \n", e);
+            else
+                printf("\n No front element in Queue as queue is empty");
+            break;
+        case 4:
+            e = rearelement(q);
+            if (e != 0)
+                printf("Queue Rear : %d \n", e);
+            else
+                printf("\n No rear element in Queue as queue is empty");
+            break;
+        case 5:
+            display(q);
+            break;
+        case 6:
+            exit(0);
+        default:
+            printf("Wrong choice, Please enter correct choice  ");
+            break;
+        }
+        system("pause");
+    }
+	return 0;
+}
+thuật toán heap sort
+#include <iostream>
+#include <stdio.h>
+using namespace std; 
+void superman(int arr[], int n, int i) 
+{ 
+    int max = i;  
+    int l = 2*i + 1;  
+    int r = 2*i + 2; 
+    if (l < n && arr[l] > arr[max]) 
+        max = l;  
+    if (r < n && arr[r] > arr[max]) 
+        max = r; 
+   
+    if (max != i) 
+    { 
+        swap(arr[i], arr[max]);  
+        superman(arr, n, max); 
+    } 
+} 
+  
+
+void spiderman(int arr[], int n) 
+{ 
+ 
+    for (int i = n / 2 - 1; i >= 0; i--) 
+        superman(arr, n, i); 
+  
+
+    for (int i=n-1; i>0; i--) 
+    { 
+ 
+        swap(arr[0], arr[i]); 
+  
+  
+        superman(arr, i, 0); 
+    } 
+} 
+  
+
+void inanhlon(int arr[], int n) 
+{ 
+    for (int i=0; i<n; ++i) 
+        printf("\t %d",arr[i]);
+} 
+  
+
+int main() 
+{ 
+    int arr[100]; 
+    int n ; 
+  	printf("n= ");
+  	scanf("%d",&n);
+  	for(int i =0 ;i<n;i++){
+  		printf("a[%d]= ",i);
+  		scanf("%d",&arr[i]);
+	  }
+    spiderman(arr, n); 
+  
+    printf("\n mang moi la : \n "); 
+    inanhlon(arr, n); 
+} 
